@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+import paramiko
+
+def ssh_connection(hostname,username,password,port,command):
+  try:
+    ssh_client = paramiko.SSHClient()
+    ssh_client.load_system_host_keys()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    print(f' connecting to {hostname}:{port} as {username}')
+    ssh_client.connect(hostname,port=port,username=username,password=password)
+    stdin,stdout,stderr = ssh_client.exec_command(command)
+    output = stdout.read().decode()
+    error = stderr.read().decode()
+    print("Output: ")
+    print(output)
+    if error:
+     print(f"Error is {error})")
+  except Exception as e:
+    print(f"exception occured: {e}")
+  finally:
+     ssh_client.close()
+
+if __name__ == "__main__":
+  hostname = input("enter the hostname: ")
+  username = input("enter the username: ")
+  port = int(input("enter the port(default is 22):") or 22)
+  command = input("enter the command to be executed: ")
+  password = input("enter the password")
+  ssh_connection(hostname,username,password,port,command)
